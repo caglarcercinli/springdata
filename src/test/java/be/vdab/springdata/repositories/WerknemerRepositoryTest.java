@@ -2,6 +2,7 @@ package be.vdab.springdata.repositories;
 
 import be.vdab.springdata.domain.Filiaal;
 import be.vdab.springdata.domain.Werknemer;
+import be.vdab.springdata.projections.AantalWerknemersPerFamilienaam;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
@@ -40,5 +41,19 @@ class WerknemerRepositoryTest extends AbstractTransactionalJUnit4SpringContextTe
         assertThat(page.getContent()).hasSize(2);
         assertThat(page.hasPrevious()).isFalse();
         assertThat(page.hasNext()).isTrue();
+    }
+    @Test
+    void findAantalWerknemersPerFamilienaam(){
+        assertThat(repository.findAantalWerknemersPerFamilienaam())
+                .hasSize(jdbcTemplate.queryForObject(
+                        "select count(distinct familienaam) from werknemers",Integer.class
+                ))
+                .filteredOn(aantalPerFamilienaam ->
+                        aantalPerFamilienaam.getFamilienaam().equals("Dalton"))
+                .hasSize(1)
+                .first()
+                .extracting(AantalWerknemersPerFamilienaam::getAantal)
+                .isEqualTo(super.countRowsInTableWhere("werknemers",
+                        "familienaam = 'Dalton' "));
     }
 }

@@ -1,6 +1,7 @@
 package be.vdab.springdata.repositories;
 
 import be.vdab.springdata.domain.Werknemer;
+import be.vdab.springdata.projections.AantalWerknemersPerFamilienaam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -13,4 +14,5 @@ public interface WerknemerRepository extends JpaRepository<Werknemer,Long> {
     @EntityGraph(value = "Werknemer.metFiliaal")
     List<Werknemer> findByVoornaamStartingWith(String woord);
     Page<Werknemer> findAll(Pageable pageable);
+    List<AantalWerknemersPerFamilienaam> findAantalWerknemersPerFamilienaam();
 }
